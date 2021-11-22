@@ -16,6 +16,8 @@ function mountGraph() {
     6: 'six',
   }, [3, 1, 0, 2, 5, 4, 6])
 
+  console.log(tree.find(5))
+
   const style = [
     {
       selector: 'node',

@@ -46,7 +46,6 @@ export default class BinarySearchTree {
         addNode(child);
       }
     }
-    console.log({ nodes, edges });
 
     return { nodes, edges };
   }
@@ -60,15 +59,22 @@ export default class BinarySearchTree {
   }
 
   _findNode(node, key) {
-    if (node == null) return null;
-    const comparison = this.compare(key, node.key);
-    if (comparison === 0) return node;
-    const child = node[this._getDirection(comparison)];
-    return this._findNode(child, key)
+    let isFound = false;
+    while (node && !isFound) {
+      const comparison = this.compare(key, node.key);
+      isFound = comparison === 0;
+      if (!isFound)
+        node = node[this._getDirection(comparison)];
+    }
+    return node;
   }
 
   _getDirection(comparison) {
     return comparison > 0 ? 'right' : 'left';
+  }
+
+  _getComparisonDirection(inKey, key) {
+    return this._getDirection(this.compare(inKey, key));
   }
 
   insert(key, value) {
@@ -80,14 +86,12 @@ export default class BinarySearchTree {
   }
 
   _insertNode(node, newNode) {
-    const comparison = this.compare(newNode.key, node.key);
-    this._insertNodeAt(node, this._getDirection(comparison), newNode);
-  }
-
-  _insertNodeAt(node, direction, newNode) {
-    if (node[direction]) {
-      this._insertNode(node[direction], newNode);
-      return;
+    let child = node;
+    let direction;
+    while (child) {
+      node = child;
+      direction = this._getComparisonDirection(newNode.key, node.key);
+      child = node[direction];
     }
     node[direction] = newNode;
   }
