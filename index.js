@@ -6,13 +6,24 @@ import { BinarySearchTree } from './trees';
 cytoscape.use(dagre);
 
 function mountGraph() {
-  const tree = new BinarySearchTree([3, 1, 0, 2, 5, 4, 6]);
+  const tree = new BinarySearchTree({
+    3: 'three',
+    1: 'one',
+    0: 'not',
+    2: 'two',
+    5: 'five',
+    4: 'four',
+    6: 'six',
+  }, [3, 1, 0, 2, 5, 4, 6])
 
   const style = [
     {
       selector: 'node',
       style: {
-        'background-color': '#11479e'
+        'background-color': '#11479e',
+        'label': 'data(id)',
+        'color': '#FFFFFF',
+        'text-valign': 'center',
       }
     },
 

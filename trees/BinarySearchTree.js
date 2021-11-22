@@ -1,28 +1,28 @@
 import BinaryNode from './BinaryNode';
 
 export default class BinarySearchTree {
-  constructor(elements=[], compare=null) {
+  constructor(elements={}, insertionOrder=null, compare=null) {
     this.compare = compare ?? this.constructor.compare;
-    this.nodeCount = 0;
-    this.root = this.createNode(elements[0]);
-
-    for (let i=1; i < elements.length; i++) {
-      this.insert(elements[i]);
+    if (!insertionOrder) insertionOrder = Object.keys(elements);
+    for (let key of insertionOrder) {
+      const value = elements[key];
+      if (!this.root) {
+        this.root = this.createNode(key, value);
+        continue;
+      }
+      this.insert(key, value);
     }
   }
 
-  createNode(value) {
-    const node = new BinaryNode(value);
-    node.id = this.nodeCount;
-    this.nodeCount ++;
-    return node;
+  createNode(key, value) {
+    return new BinaryNode(key, value);
   }
 
   toGraph(prefix='') {
     const nodes = [];
-    const addNode = ({ id, value }) => {
+    const addNode = ({ key, value }) => {
       nodes.push({
-        data: { id, value }
+        data: { id: key, value }
       })
     }
     addNode(this.root);
@@ -32,7 +32,7 @@ export default class BinarySearchTree {
     const edges = [];
     const addEdge = (node, child) => {
       edges.push({
-        data: { source: node.id, target: child.id },
+        data: { source: node.key, target: child.key },
       })
     }
 
@@ -51,24 +51,28 @@ export default class BinarySearchTree {
     return { nodes, edges };
   }
 
-  findNode(value) {
-    return this._findNode(this.root, value);
+  find(key) {
+    return this.findNode(key).value;
   }
 
-  _findNode(node, value) {
+  findNode(key) {
+    return this._findNode(this.root, key);
+  }
+
+  _findNode(node, key) {
     if (node == null) return null;
-    const comparison = this.compare(node.value, value);
+    const comparison = this.compare(key, node.key);
     if (comparison === 0) return node;
     const child = node[this._getDirection(comparison)];
-    return this._findNode(child, value)
+    return this._findNode(child, key)
   }
 
   _getDirection(comparison) {
     return comparison > 0 ? 'right' : 'left';
   }
 
-  insert(value) {
-    this.insertNode(this.createNode(value));
+  insert(key, value) {
+    this.insertNode(this.createNode(key, value));
   }
 
   insertNode(newNode) {
@@ -76,7 +80,7 @@ export default class BinarySearchTree {
   }
 
   _insertNode(node, newNode) {
-    const comparison = this.compare(node.value, newNode.value);
+    const comparison = this.compare(newNode.key, node.key);
     this._insertNodeAt(node, this._getDirection(comparison), newNode);
   }
 
@@ -84,13 +88,13 @@ export default class BinarySearchTree {
     if (node[direction]) {
       this._insertNode(node[direction], newNode);
       return;
-    };
+    }
     node[direction] = newNode;
   }
 
-  static compare(nodeValue, otherNodeValue) {
-    if (nodeValue > otherNodeValue) return 1;
-    if (nodeValue < otherNodeValue) return -1;
+  static compare(key, otherKey) {
+    if (key > otherKey) return 1;
+    if (key < otherKey) return -1;
     return 0;
   }
 }
