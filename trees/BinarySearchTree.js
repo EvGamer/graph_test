@@ -54,19 +54,35 @@ export default class BinarySearchTree {
     return this.findNode(key).value;
   }
 
-  findNode(key) {
-    return this._findNode(this.root, key);
-  }
-
-  _findNode(node, key) {
+  findNodeAndParent(key) {
+    let parent = null;
+    let node = this.root;
     let isFound = false;
+    let direction = null;
+
     while (node && !isFound) {
       const comparison = this.compare(key, node.key);
       isFound = comparison === 0;
-      if (!isFound)
-        node = node[this._getDirection(comparison)];
+      if (!isFound) {
+        direction = this._getDirection(comparison);
+        parent = node;
+        node = node[direction];
+      }
     }
-    return node;
+
+    return { node, parent, direction }
+  }
+
+  findNode(key) {
+    return this.findNodeAndParent(key).node;
+  }
+
+  attachToParent(node, parent = null, direction = null) {
+    if (parent === null) {
+      this.root = node;
+      return;
+    }
+    parent[direction] = node
   }
 
   _getDirection(comparison) {
@@ -82,11 +98,8 @@ export default class BinarySearchTree {
   }
 
   insertNode(newNode) {
-    this._insertNode(this.root, newNode);
-  }
-
-  _insertNode(node, newNode) {
-    let child = node;
+    let child = this.root;
+    let node;
     let direction;
     while (child) {
       node = child;
