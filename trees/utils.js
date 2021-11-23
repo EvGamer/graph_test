@@ -1,11 +1,12 @@
 export function rotateSubtree(oldRoot, direction='left') {
   const opposite = direction === 'right' ? 'left' : 'right';
 
-  const newRoot = oldRoot[opposite];
-  const pulledNode = oldRoot[direction];
+  const child = oldRoot[opposite];
+  const inner = child[direction];
 
-  newRoot[direction] = oldRoot
-  oldRoot[opposite] = pulledNode
 
-  return newRoot;
+  child[direction] = oldRoot
+  oldRoot[opposite] = inner
+
+  return child;
 }

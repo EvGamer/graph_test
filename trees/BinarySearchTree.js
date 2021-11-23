@@ -1,21 +1,27 @@
 import BinaryNode from './BinaryNode';
 
 export default class BinarySearchTree {
-  constructor(elements={}, insertionOrder=null, compare=null) {
+  constructor(graph, elements={}, insertionOrder=null, compare=null) {
+    this.graph = graph;
+
     this.compare = compare ?? this.constructor.compare;
     if (!insertionOrder) insertionOrder = Object.keys(elements);
+
     for (let key of insertionOrder) {
       const value = elements[key];
       if (!this.root) {
         this.root = this.createNode(key, value);
-        continue;
+      } else {
+        this.insert(key, value);
       }
-      this.insert(key, value);
     }
+
+    this.layout = this.graph.layout({ name: 'dagre' });
+    this.layout.run();
   }
 
   createNode(key, value) {
-    return new BinaryNode(key, value);
+    return BinaryNode.create(this.graph, key, value);
   }
 
   toGraph(prefix='') {
@@ -94,7 +100,8 @@ export default class BinarySearchTree {
   }
 
   insert(key, value) {
-    this.insertNode(this.createNode(key, value));
+    const node = this.createNode(key, value);
+    this.insertNode(node);
   }
 
   insertNode(newNode) {

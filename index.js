@@ -9,15 +9,6 @@ const RIGHT_MOUSE_BUTTON = 1;
 
 function mountGraph() {
 
-  const tree = new BinarySearchTree({
-    3: 'three',
-    1: 'one',
-    0: 'not',
-    2: 'two',
-    5: 'five',
-    4: 'four',
-    6: 'six',
-  }, [3, 1, 0, 2, 5, 4, 6])
 
 
   const style = [
@@ -55,8 +46,21 @@ function mountGraph() {
 
     style,
 
-    elements: tree.toGraph(),
+    elements: {
+      edges: [],
+      nodes: [],
+    },
   });
+
+  const tree = new BinarySearchTree(cy, {
+    3: 'three',
+    1: 'one',
+    0: 'not',
+    2: 'two',
+    5: 'five',
+    4: 'four',
+    6: 'six',
+  }, [3, 1, 0, 2, 5, 4, 6])
 
   let tapAction = null;
   // window.addEventListener('mousedown', (event) => {
@@ -69,14 +73,9 @@ function mountGraph() {
     document.getElementById(buttonId).addEventListener('click', () => {
       console.log(buttonId);
       tapAction = (event) => {
-        const { parent, direction, node } = tree.findNodeAndParent(event.target.id);
+        const { parent, direction, node } = tree.findNodeAndParent(event.target.data('id'));
         tree.attachToParent(rotateSubtree(node, rotationDirection), parent, direction);
-        cy.remove(cy.elements('edge'));
-        cy.remove(cy.elements('node'));
-        const graph = tree.toGraph();
-        cy.add(graph.nodes.map(({ data }) => ({ group: 'nodes', data })));
-        cy.add(graph.edges.map(({ data }) => ({ group: 'edges', data })));
-        console.log('data should be replaced')
+        tree.layout.run()
       }
     })
   }
@@ -84,8 +83,7 @@ function mountGraph() {
   addHandlerSetRotation('rotate_right', 'right');
 
   cy.on('tap', 'node', (event) => {
-    console.log('tap', event);
-    console.log(tapAction);
+    console.log('tap', event.target.data('id'));
     if (tapAction) {
       tapAction(event)
     }
