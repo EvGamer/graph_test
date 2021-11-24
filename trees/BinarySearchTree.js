@@ -8,12 +8,7 @@ export default class BinarySearchTree {
     if (!insertionOrder) insertionOrder = Object.keys(elements);
 
     for (let key of insertionOrder) {
-      const value = elements[key];
-      if (!this.root) {
-        this.root = this.createNode(key, value);
-      } else {
-        this.insert(key, value);
-      }
+      this.insert (key, elements[key]);
     }
 
     this.layout = this.graph.layout({ name: 'dagre' });
@@ -105,6 +100,10 @@ export default class BinarySearchTree {
   }
 
   insertNode(newNode) {
+    if (!this.root) {
+      this.root = newNode;
+      return;
+    }
     let child = this.root;
     let node;
     let direction;

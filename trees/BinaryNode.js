@@ -11,11 +11,15 @@ export default class BinaryNode {
     return new this(graph, id, left, right);
   }
 
-  createDataProperty(propertyName) {
-    Object.defineProperty(this, propertyName, {
-      get: () => this._node.data(propertyName),
-      set: (newValue) => this._node.data(propertyName, newValue),
-    })
+  createDataProperties(properties) {
+    for (let propertyName of properties) {
+      Object.defineProperty(this, propertyName, {
+        get: () => this._node.data(propertyName),
+        set: (newValue) => this._node.data(propertyName, newValue),
+        enumerable: true,
+        configurable: true,
+      })
+    }
   }
 
   constructor(graph, id, left=null, right=null) {
@@ -25,9 +29,7 @@ export default class BinaryNode {
     this.rightEdgeId = `${id}_right`;
     if (left) this.left = left;
     if (right) this.right = right;
-    for (const key in this.constructor.dataProperties()) {
-      this.createDataProperty(key);
-    }
+    this.createDataProperties(['value']);
   }
 
   getEdgeId(direction) {
@@ -45,7 +47,7 @@ export default class BinaryNode {
     const id = this.getEdgeId(direction);
     const edge = this.graph.$id(id);
     if (!edge.isEdge()) return null;
-    return new BinaryNode(this.graph, edge.data('target'))
+    return new this.constructor(this.graph, edge.data('target'))
   }
 
   connectTo(node, direction='left') {
@@ -68,7 +70,7 @@ export default class BinaryNode {
   }
 
   get _node() {
-    return this.graph.$(this.key);
+    return this.graph.$id(this.key);
   }
   get left() {
     return this.getChild('left');
@@ -95,7 +97,7 @@ export default class BinaryNode {
   get parent() {
     const edge = this.parentEdge;
     if (edge)
-      return new BinaryNode(this.graph, edge.data('source'));
+      return new this.constructor(this.graph, edge.data('source'));
     return null;
   }
 }
