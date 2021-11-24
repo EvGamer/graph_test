@@ -1,4 +1,8 @@
 export default class BinaryNode {
+  static *dataProperties() {
+    yield 'value';
+  }
+
   static create(graph, id, value, left, right) {
     graph.add({
       group: 'nodes',
@@ -7,6 +11,12 @@ export default class BinaryNode {
     return new this(graph, id, left, right);
   }
 
+  createDataProperty(propertyName) {
+    Object.defineProperty(this, propertyName, {
+      get: () => this._node.data(propertyName),
+      set: (newValue) => this._node.data(propertyName, newValue),
+    })
+  }
 
   constructor(graph, id, left=null, right=null) {
     this.graph = graph;
@@ -15,6 +25,9 @@ export default class BinaryNode {
     this.rightEdgeId = `${id}_right`;
     if (left) this.left = left;
     if (right) this.right = right;
+    for (const key in this.constructor.dataProperties()) {
+      this.createDataProperty(key);
+    }
   }
 
   getEdgeId(direction) {
@@ -57,15 +70,6 @@ export default class BinaryNode {
   get _node() {
     return this.graph.$(this.key);
   }
-
-  get value() {
-    return this._node.data('value');
-  }
-
-  set value(value) {
-    return this._node.data('value', value);
-  }
-
   get left() {
     return this.getChild('left');
   }
