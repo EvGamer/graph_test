@@ -1,11 +1,11 @@
 import cytoscape from "cytoscape";
 import dagre from 'cytoscape-dagre';
 
-import { BinarySearchTree, RedBlackTree } from './trees';
+import { RedBlackTree } from './trees';
 import { rotateSubtree } from './trees/utils';
+import { fillEveryKeyWithValue, shuffleRange } from './utils';
 
 cytoscape.use(dagre);
-const RIGHT_MOUSE_BUTTON = 1;
 
 function mountGraph() {
 
@@ -60,22 +60,10 @@ function mountGraph() {
     },
   });
 
-  const tree = new RedBlackTree(cy, {
-    3: 'three',
-    1: 'one',
-    0: 'not',
-    2: 'two',
-    5: 'five',
-    4: 'four',
-    6: 'six',
-  }, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-  tree.root.isRed = false;
+  const keys = shuffleRange(0, 20);
+  const tree = new RedBlackTree(cy, fillEveryKeyWithValue(keys, 'dummy'), keys);
 
   let tapAction = null;
-  // window.addEventListener('mousedown', (event) => {
-  //   if (event.button !== RIGHT_MOUSE_BUTTON) return;
-  //   tapAction = null;
-  // })
 
 
   function addHandlerSetRotation(buttonId, rotationDirection) {

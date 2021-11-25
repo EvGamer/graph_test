@@ -10,9 +10,6 @@ export default class BinarySearchTree {
     for (let key of insertionOrder) {
       this.insert (key, elements[key]);
     }
-
-    this.layout = this.graph.layout({ name: 'dagre' });
-    this.layout.run();
   }
 
   createNode(key, value) {

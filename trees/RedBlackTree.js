@@ -37,21 +37,17 @@ export default class RedBlackTree extends BinarySearchTree {
       node = child;
       direction = this._getComparisonDirection(newNode.key, node.key);
       child = node[direction];
-      path.push({ from: node, direction });
+      path.push([node, direction]);
     }
     node[direction] = newNode;
 
-    let firstIteration = true;
     // balancing
     while (path.length >= 2) {
-      const toNode = path.pop();
-      let parent = toNode.from;
+      let [parent, dirToNode] = path.pop();
 
-      if (!parent.isRed && firstIteration) return;
-      firstIteration = false;
+      if (!parent.isRed) break;
 
-      const toParent = path.pop();
-      let grandParent = toParent.from;
+      let [grandParent, dirToParent] = path.pop();
 
       const uncle = getSiblingNode(grandParent, parent.key);
 
@@ -63,26 +59,26 @@ export default class RedBlackTree extends BinarySearchTree {
       }
 
       // turning LR case to LL case and RL case into RR case
-      if (toNode.direction !== toParent.direction) {
-        const opposite = getOppositeDir(toNode.direction);
-
-        parent = rotateSubtree(toNode.from, opposite);
-        grandParent[toParent.direction] = parent;
+      if (dirToNode !== dirToParent) {
+        parent = rotateSubtree(parent, getOppositeDir(dirToNode));
+        grandParent[dirToParent] = parent;
       }
 
       // balancing LL and RR cases
       parent.isRed = false
       grandParent.isRed = true
-      grandParent = rotateSubtree(grandParent, getOppositeDir(toParent.direction));
+      grandParent = rotateSubtree(grandParent, getOppositeDir(dirToParent));
 
       // attaching rotated subtree
       if (path.length > 0) {
-        const { from, direction } = path[path.length - 1];
-        from[direction] = grandParent;
+        const [grandGrandParent, direction] = path[path.length - 1];
+        grandGrandParent[direction] = grandParent;
       } else {
         this.root = grandParent;
       }
+      break;
     }
+    this.root.isRed = false;
   }
 
 }
