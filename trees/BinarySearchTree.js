@@ -10,6 +10,17 @@ export default class BinarySearchTree {
     for (let key of insertionOrder) {
       this.insert (key, elements[key]);
     }
+
+    const layout = this.graph.layout({ name: 'dagre' });
+    layout.run();
+  }
+
+  // arranges nodes on screen
+  arrange(animate=true) {
+    const layout = this.graph.layout({ name: 'dagre', animate });
+    layout.run();
+    if (!animate) return Promise.resolve();
+    return layout.promiseOn('layoutstop');
   }
 
   createNode(key, value) {
@@ -94,6 +105,11 @@ export default class BinarySearchTree {
   insert(key, value) {
     const node = this.createNode(key, value);
     this.insertNode(node);
+  }
+
+  async animInsert(key, value) {
+    const node = this.createNode(key, value);
+    await this.animInsertNode(node);
   }
 
   insertNode(newNode) {

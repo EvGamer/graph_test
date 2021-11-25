@@ -31,6 +31,13 @@ function mountGraph() {
       }
     },
     {
+      selector: 'node[?isHighlighted]',
+      style: {
+        'background-color': '#00848C',
+        'border-color': '#76FEC5',
+      }
+    },
+    {
       selector: 'edge',
       style: {
         'width': 4,
@@ -61,7 +68,14 @@ function mountGraph() {
   });
 
   const keys = shuffleRange(0, 20);
-  const tree = new RedBlackTree(cy, fillEveryKeyWithValue(keys, 'dummy'), keys);
+  const tree = new RedBlackTree(cy, {});
+
+  async function insertAll() {
+    for (let key of keys) {
+      await tree.animInsert(key, 'dummy')
+    }
+  }
+  insertAll().then(() => console.log('done'));
 
   let tapAction = null;
 

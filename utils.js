@@ -58,3 +58,5 @@ export function delayedLoop(delay, sequence, callback) {
     else callback(value);
   }, delay)
 }
+
+export const delay = (duration) => new Promise((resolve) => setTimeout(() => resolve(), duration));
