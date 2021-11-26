@@ -3,52 +3,11 @@ import dagre from 'cytoscape-dagre';
 
 import { RedBlackTree } from './trees';
 import { rotateSubtree } from './trees/utils';
-import { fillEveryKeyWithValue, shuffleRange } from './utils';
+import { shuffleRange } from './utils';
 
 cytoscape.use(dagre);
 
 function mountGraph() {
-
-
-
-  const style = [
-    {
-      selector: 'node',
-      style: {
-        'background-color': '#231F20',
-        'border-width': '2px',
-        'border-color': '#58595B',
-        'label': 'data(id)',
-        'color': '#FFFFFF',
-        'text-valign': 'center',
-      }
-    },
-    {
-      selector: 'node[?isRed]',
-      style: {
-        'background-color': '#922D25',
-        'border-color': '#D8664D',
-      }
-    },
-    {
-      selector: 'node[?isHighlighted]',
-      style: {
-        'background-color': '#00848C',
-        'border-color': '#76FEC5',
-      }
-    },
-    {
-      selector: 'edge',
-      style: {
-        'width': 4,
-        'target-arrow-shape': 'triangle',
-        'line-color': '#bcbec0',
-        'target-arrow-color': '#BCBEC0',
-        'curve-style': 'bezier'
-      }
-    }
-  ]
-
   const cy = window.cy = cytoscape({
     container: document.getElementById('graph'),
 
@@ -58,8 +17,6 @@ function mountGraph() {
     layout: {
       name: 'dagre'
     },
-
-    style,
 
     elements: {
       edges: [],

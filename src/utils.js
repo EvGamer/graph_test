@@ -4,17 +4,6 @@ export function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-class LoopDebugger {
-  constructor(iterations) {
-    this.iterations = iterations;
-  }
-
-  tick() {
-    this.iterations --;
-    if (!this.iterations) throw Error('Max iterations exceeded')
-  }
-}
-
 export function shuffleRange(min, max) {
   const length = max - min + 1;
   const sequence = [];

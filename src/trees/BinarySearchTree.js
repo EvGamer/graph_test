@@ -27,7 +27,7 @@ export default class BinarySearchTree {
     return BinaryNode.create(this.graph, key, value);
   }
 
-  toGraph(prefix='') {
+  toGraph() {
     const nodes = [];
     const addNode = ({ key, value }) => {
       nodes.push({
