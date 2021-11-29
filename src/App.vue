@@ -1,11 +1,15 @@
 <template>
-  <component :is="Page" />
+  <article>
+    <side-bar></side-bar>
+    <component :is="Page" />
+  </article>
 </template>
 
 <script>
 import NotFound from './routes/NotFound';
 import RedBlackTreePage from './routes/RedBlackTreePage/RedBlackTreePage';
 import HomePage from './routes/HomePage';
+import SideBar from './components/SideBar';
 
 const routes = {
   '/': HomePage,
@@ -14,6 +18,7 @@ const routes = {
 
 export default {
   name: 'App',
+  components: { SideBar },
   data: () => ({
     currentRoute: window.location.pathname,
   }),

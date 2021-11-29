@@ -1,5 +1,5 @@
 <template>
-  <a href="trees/red-black">Red Black Tree</a>
+  <div></div>
 </template>
 
 <script>
@@ -9,5 +9,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
