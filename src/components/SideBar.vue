@@ -1,6 +1,7 @@
 <template>
   <aside>
     <a href="/trees/red-black">Red Black Tree</a>
+    <a href="/free-form">Free Form</a>
   </aside>
 </template>
 
@@ -16,6 +17,7 @@ aside {
 }
 
 a {
+  display: block;
   color: white;
 }
 </style>

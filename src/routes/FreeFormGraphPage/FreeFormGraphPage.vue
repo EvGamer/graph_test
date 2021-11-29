@@ -7,12 +7,12 @@
 <script>
 import { getCurrentInstance, onMounted, onUnmounted } from 'vue';
 import cytoscape from 'cytoscape';
+import graphData from './graph.json';
 import graphStyle from './graphStyle';
-import { shuffleRange } from '../../utils';
-import { RedBlackTree } from '../../trees';
+
 
 export default {
-  name: 'RedBlackTree',
+  name: 'FreeFormGraphPage',
   setup() {
     onMounted(() => {
       const instance = getCurrentInstance();
@@ -23,24 +23,11 @@ export default {
 
         style: graphStyle,
 
-        layout: { name: 'dagre' },
+        layout: { name: 'cose-bilkent' },
 
-        elements: {
-          edges: [],
-          nodes: [],
-        }
+        elements: graphData,
       })
       instance.$graph = graph;
-
-      const keys = shuffleRange(0, 20);
-      const tree = new RedBlackTree(graph, {});
-
-      async function insertAll() {
-        for (let key of keys) {
-          await tree.animInsert(key, 'dummy')
-        }
-      }
-      insertAll().then(() => console.log('done'));
     })
 
     onUnmounted(() => {

@@ -1,6 +1,6 @@
 <template>
   <article>
-    <side-bar></side-bar>
+    <side-bar />
     <component :is="Page" />
   </article>
 </template>
@@ -10,10 +10,12 @@ import NotFound from './routes/NotFound';
 import RedBlackTreePage from './routes/RedBlackTreePage/RedBlackTreePage';
 import HomePage from './routes/HomePage';
 import SideBar from './components/SideBar';
+import FreeFormGraphPage from './routes/FreeFormGraphPage/FreeFormGraphPage';
 
 const routes = {
   '/': HomePage,
   '/trees/red-black': RedBlackTreePage,
+  '/free-form': FreeFormGraphPage,
 }
 
 export default {
