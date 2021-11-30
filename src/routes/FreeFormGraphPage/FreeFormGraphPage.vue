@@ -3,6 +3,7 @@
     <div ref="graph" class="graph" />
     <div>
       <Table
+        title="Nodes to see"
         key-field="nodeId"
         :columns="priorityQueueColumns"
         :values="priorityQueue"
@@ -12,7 +13,7 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, onUnmounted } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import cytoscape from 'cytoscape';
 import Table from '../../components/Table';
 import graphData from '../../graphs/graph.json';
@@ -26,15 +27,18 @@ export default {
     Table,
   },
 
-  data: () => ({
-    priorityQueue: [],
-    priorityQueueColumns: [
+  setup() {
+    const priorityQueue = ref([]);
+
+    const priorityQueueColumns = [
       { name: 'Node', field: 'nodeId' },
       { name: 'Weight', field: 'weight' },
-    ],
-  }),
+    ];
 
-  setup() {
+    const pathFindingAlgorithm = (source, destination) => {
+      console.log(source.data('id'), destination.data('id'));
+    }
+
     onMounted(() => {
       const instance = getCurrentInstance();
       instance.$graph = cytoscape({
@@ -48,12 +52,31 @@ export default {
 
         elements: graphData,
       });
+      const graph = instance.$graph;
+
+      let source = null;
+
+      graph.on('tap', 'node', function(event) {
+        if (source === null) {
+          source = event.target;
+          source.data('isHighlighted', true);
+          return;
+        }
+        pathFindingAlgorithm(source, event.target);
+        source.data('isHighlighted', false);
+        source = null;
+      });
     })
 
     onUnmounted(() => {
       const instance = getCurrentInstance();
       instance.$graph.destroy();
     })
+
+    return {
+      priorityQueueColumns,
+      priorityQueue,
+    }
   }
 }
 </script>
