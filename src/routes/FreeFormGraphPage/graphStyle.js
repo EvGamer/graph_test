@@ -20,10 +20,13 @@ export default [
   {
     selector: 'edge',
     style: {
-      'width': 4,
+      'width': edge => {
+        const weight = edge.data('weight') || 0;
+        return 10 - weight * 2;
+      },
       'line-color': '#bcbec0',
       'target-arrow-color': '#BCBEC0',
       'curve-style': 'bezier'
     }
-  }
+  },
 ]

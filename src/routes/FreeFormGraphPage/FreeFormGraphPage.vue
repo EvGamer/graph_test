@@ -7,7 +7,7 @@
 <script>
 import { getCurrentInstance, onMounted, onUnmounted } from 'vue';
 import cytoscape from 'cytoscape';
-import graphData from './graph.json';
+import graphData from '../../graphs/graph.json';
 import graphStyle from './graphStyle';
 
 
@@ -16,7 +16,7 @@ export default {
   setup() {
     onMounted(() => {
       const instance = getCurrentInstance();
-      const graph = cytoscape({
+      instance.$graph = cytoscape({
         container: instance.refs.graph,
         boxSelectionEnabled: false,
         autounselectify: false,
@@ -26,8 +26,7 @@ export default {
         layout: { name: 'cose-bilkent' },
 
         elements: graphData,
-      })
-      instance.$graph = graph;
+      });
     })
 
     onUnmounted(() => {
