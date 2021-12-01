@@ -24,6 +24,7 @@ import cytoscape from 'cytoscape';
 import Table from '../../components/Table';
 import graphData from '../../graphs/graph.json';
 import graphStyle from './graphStyle';
+import { delay } from '../../utils';
 
 
 export default {
@@ -64,10 +65,13 @@ export default {
         weight: 0,
       });
 
+      const step = 500;
+
       while (getQueuedNodes(graph).nonempty()) {
         const node = getQueuedNodes(graph).sort(byWeight)[0];
 
         node.data('isVisited', true);
+        await delay(step);
         if (node.data('id') === destinationId) break;
 
         for (let neighbor of node.neighborhood('node[!isVisited]')) {
@@ -76,6 +80,7 @@ export default {
             isQueued: true,
             weight: node.data('weight') + edge.data('weight')
           })
+          await delay(step);
           if (neighbor.data('id') === destinationId) break;
         }
       }
@@ -83,6 +88,7 @@ export default {
       const path = [destination];
 
       destination.data('isPath', true);
+      await delay(step)
 
       let node = destination;
       while (node.data('id') !== sourceId) {
@@ -97,6 +103,7 @@ export default {
         node = minNode;
         path.push(minNode);
         minNode.data('isPath', true);
+        await delay(step);
       }
       path.reverse()
       return path;
