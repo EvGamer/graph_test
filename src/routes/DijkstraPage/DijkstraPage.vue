@@ -46,8 +46,16 @@ export default {
     const getQueuedNodes = (graph) => graph.$('node[?isQueued][!isVisited]');
     const byWeight = (a, b) => a.data('weight') - b.data('weight');
 
-    const pathFindingAlgorithm = (graph, source, destination) => {
+    const pathFindingAlgorithm = async (graph, source, destination) => {
       console.log(source.data('id'), destination.data('id'));
+
+      graph.$('node').data({
+        isQueued: false,
+        isVisited: false,
+        isPath: false,
+        weight: undefined,
+      })
+
       const destinationId = destination.data('id');
       const sourceId = source.data('id');
 
@@ -109,14 +117,16 @@ export default {
       });
       const graph = instance.$graph;
 
+      window.graph = graph;
+
       let source = null;
 
-      graph.on('tap', 'node', (event) => {
+      graph.on('tap', 'node', async (event) => {
         if (source === null) {
           source = event.target;
           return;
         }
-        pathFindingAlgorithm(graph, source, event.target);
+        await pathFindingAlgorithm(graph, source, event.target);
         source = null;
       });
 
