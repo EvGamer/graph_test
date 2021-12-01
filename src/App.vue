@@ -10,12 +10,12 @@ import NotFound from './routes/NotFound';
 import RedBlackTreePage from './routes/RedBlackTreePage/RedBlackTreePage';
 import HomePage from './routes/HomePage';
 import SideBar from './components/SideBar';
-import FreeFormGraphPage from './routes/FreeFormGraphPage/FreeFormGraphPage';
+import DijkstraPage from './routes/DijkstraPage/DijkstraPage';
 
 const routes = {
   '/': HomePage,
   '/trees/red-black': RedBlackTreePage,
-  '/free-form': FreeFormGraphPage,
+  '/pathfinding/dijkstra': DijkstraPage,
 }
 
 export default {

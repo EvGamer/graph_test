@@ -11,10 +11,24 @@ export default [
     }
   },
   {
-    selector: 'node[?isHighlighted]',
+    selector: 'node[?isQueued]',
+    style: {
+      'background-color': '#0260E8',
+      'border-color': '#5199FF',
+    }
+  },
+  {
+    selector: 'node[?isVisited]',
     style: {
       'background-color': '#00848C',
       'border-color': '#76FEC5',
+    }
+  },
+  {
+    selector: 'node[?isPath]',
+    style: {
+      'background-color': '#D2AA1B',
+      'border-color': '#F4EDB2',
     }
   },
   {

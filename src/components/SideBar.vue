@@ -1,7 +1,7 @@
 <template>
   <aside>
     <a href="/trees/red-black">Red Black Tree</a>
-    <a href="/free-form">Free Form</a>
+    <a href="/pathfinding/dijkstra">Dijkstra Algorithm</a>
   </aside>
 </template>
 
