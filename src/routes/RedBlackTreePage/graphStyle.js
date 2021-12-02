@@ -29,8 +29,8 @@ export default [
     style: {
       'width': 4,
       'target-arrow-shape': 'triangle',
-      'line-color': '#bcbec0',
       'target-arrow-color': '#BCBEC0',
+      'line-color': '#bcbec0',
       'curve-style': 'bezier'
     }
   }

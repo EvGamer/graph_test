@@ -1,3 +1,5 @@
+const PATH_LINE_COLOR = '#F4EDB2';
+
 export default [
   {
     selector: 'node',
@@ -34,7 +36,7 @@ export default [
     selector: 'node[?isPath]',
     style: {
       'background-color': '#D2AA1B',
-      'border-color': '#F4EDB2',
+      'border-color': PATH_LINE_COLOR,
     }
   },
   {
@@ -49,4 +51,12 @@ export default [
       'curve-style': 'bezier'
     }
   },
+  {
+    selector: 'edge[?isPath]',
+    style: {
+      'line-color': PATH_LINE_COLOR,
+      'target-arrow-color': PATH_LINE_COLOR,
+      'target-arrow-shape': 'triangle',
+    }
+  }
 ]

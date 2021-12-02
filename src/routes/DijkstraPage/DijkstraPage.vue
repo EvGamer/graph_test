@@ -100,6 +100,10 @@ export default {
           }
         }
         if (minNode === null) break;
+        const edge = node.edgesWith(minNode);
+        edge.move({ source: minNode.data('id'), target: node.data('id') });
+        edge.data('isPath', true);
+
         node = minNode;
         path.push(minNode);
         minNode.data('isPath', true);
@@ -145,7 +149,7 @@ export default {
       graph.on('data', 'node', () => {
         priorityQueue.value = getQueuedNodes(graph)
             .sort(byWeight).map(getNodeData);
-        visited.value = graph.$('node[isVisited]').map(getNodeData);
+        visited.value = graph.$('node[?isVisited]').map(getNodeData);
       })
     })
 
