@@ -13,12 +13,6 @@ export default [
     }
   },
   {
-    selector: 'node[weight]',
-    style: {
-      'label': 'data(weight)',
-    }
-  },
-  {
     selector: 'node[?isQueued]',
     style: {
       'background-color': '#0260E8',

@@ -13,7 +13,7 @@ export default {
 
 <style scoped>
 aside {
-
+  width: max-content;
 }
 
 a {

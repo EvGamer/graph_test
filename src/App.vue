@@ -37,10 +37,17 @@ body {
   background: #222222;
   color: white;
 }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+}
+
+article {
+  display: flex;
+  width: 100vw;
+  box-sizing: content-box;
 }
 </style>

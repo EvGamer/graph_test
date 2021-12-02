@@ -6,6 +6,6 @@ import coseBilkent from 'cytoscape-cose-bilkent';
 import App from './App.vue';
 
 cytoscape.use(dagre);
-cytoscape.use(coseBilkent)
+cytoscape.use(coseBilkent);
 
 createApp(App).mount('#app')
