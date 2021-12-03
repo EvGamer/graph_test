@@ -54,7 +54,7 @@ export default function useTrackNodes(blankNodeData) {
       }
     });
 
-    graph.on('position', ({ target }) => {
+    graph.on('position', 'node', ({ target }) => {
       updateProxyPosition(target);
     })
 
