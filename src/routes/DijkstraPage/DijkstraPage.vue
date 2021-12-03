@@ -28,12 +28,13 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, onUnmounted, ref, reactive } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import cytoscape from 'cytoscape';
 import Table from '../../components/Table';
 import graphData from '../../graphs/graph.json';
 import graphStyle from './graphStyle';
 import { delay } from '../../utils';
+import { useTrackNodes } from '../../hooks';
 
 
 export default {
@@ -71,56 +72,9 @@ export default {
     const priorityQueue = ref([]);
     const visited = ref([]);
 
-    const nodeHints = ref({});
-
-    function getNodeHint(node) {
-      const id = node.data('id');
-      return nodeHints.value[id];
-    }
-
-    function updateHintPosition(node) {
-      const nodeHint = getNodeHint(node);
-      setHintPosition(nodeHint, node);
-    }
-
-    function updateHint(node) {
-      const nodeHint = getNodeHint(node);
-      setHintData(nodeHint, node)
-    }
-
-    function getBoundingBox(node) {
-      // const { x, y } = node.renderedPosition();
-      // return { x2: x, y1: y };
-
-      return node.renderedBoundingBox({
-        includeNodes: true,
-        includeEdges: false,
-        includeLabels: false,
-        includeOverlays: false,
-      })
-    }
-
-    function setHint(node) {
-      const { id, weight } = node.data();
-      const { x2, y1 } = getBoundingBox(node);
-      nodeHints.value[id] = reactive({
-        weight,
-        top: y1,
-        left: x2,
-      });
-    }
-
-    function setHintPosition(nodeHint, node) {
-      const { x2, y1 } = getBoundingBox(node);
-
-      nodeHint.top = y1;
-      nodeHint.left = x2;
-    }
-
-    function setHintData(nodeHint, node) {
-      const data = node.data();
-      nodeHint.weight = data.weight;
-    }
+    const nodeHints = useTrackNodes({
+      weight: undefined,
+    })
 
     const priorityQueueColumns = [
       { name: 'Node', field: 'nodeId' },
@@ -212,8 +166,6 @@ export default {
       });
       const graph = instance.$graph;
 
-      window.graph = graph;
-
       let source = null;
 
       graph.on('tap', 'node', async (event) => {
@@ -225,32 +177,19 @@ export default {
         source = null;
       });
 
+
+      graph.on('data', 'node', () => {
+        priorityQueue.value = getQueuedNodes(graph)
+            .sort(byWeight).map(getNodeData);
+        visited.value = graph.$('node[?isVisited]').map(getNodeData);
+      })
+
       const getNodeData = (node) => ({
         nodeId: node.data('id'),
         weight: node.data('weight'),
       });
 
-      for (let node of graph.nodes()) {
-        setHint(node);
-      }
-
-      graph.on('pan zoom resize', () => {
-        for (let node of graph.nodes()) {
-          updateHintPosition(node);
-        }
-      });
-
-      graph.on('position', ({ target }) => {
-        updateHintPosition(target);
-      })
-
-      graph.on('data', 'node', ({ target }) => {
-        priorityQueue.value = getQueuedNodes(graph)
-            .sort(byWeight).map(getNodeData);
-        visited.value = graph.$('node[?isVisited]').map(getNodeData);
-
-        updateHint(target);
-      })
+      nodeHints.connectToGraph(graph);
     })
 
     onUnmounted(() => {
@@ -263,7 +202,7 @@ export default {
       priorityQueue,
       visited,
       visitedColumns,
-      nodeHints,
+      nodeHints: nodeHints.proxies,
     }
   }
 }
