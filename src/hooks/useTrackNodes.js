@@ -1,6 +1,6 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
-export default function useTrackNodes(blankNodeData) {
+export default function useTrackNodes(graphRef, blankNodeData) {
   const proxies = ref({})
 
   function getProxy(node) {
@@ -43,7 +43,10 @@ export default function useTrackNodes(blankNodeData) {
     proxies.value[id] = reactive(nodeData);
   }
 
-  function connectToGraph(graph) {
+  watch(graphRef, graph => {
+    console.log(graph);
+    if (!graph) return;
+
     for (let node of graph.nodes()) {
       initProxy(node);
     }
@@ -61,12 +64,9 @@ export default function useTrackNodes(blankNodeData) {
     graph.on('data', 'node', ({ target }) => {
       updateProxyData(target);
     })
-  }
+  })
 
-  return {
-    proxies,
-    connectToGraph,
-  }
+  return proxies;
 }
 
 function getBoundingBox(node) {

@@ -1,12 +1,10 @@
-import { unref, watchEffect } from 'vue';
+import { watch } from 'vue';
 
-export default function useOnGraphEditorEvent(graph, mode, eventType, query, expectedMode, handler) {
-  graph = unref(graph);
+export default function useOnGraphEditorEvent(graphRef, modeRef, eventType, query, expectedMode, handler) {
+  watch([graphRef, modeRef], ([graph, mode]) => {
+    if (!graph) return;
 
-  watchEffect(() => {
-    const modeValue = unref(mode);
-
-    if (modeValue === expectedMode) {
+    if (mode === expectedMode) {
       graph.on(eventType, query, handler);
       return;
     }
