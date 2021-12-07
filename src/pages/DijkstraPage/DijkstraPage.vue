@@ -40,7 +40,7 @@ const getQueuedNodes = (graph) => graph.$('node[?isQueued][!isVisited]');
 
 const byWeight = (a, b) => a.data('weight') - b.data('weight');
 
-const pathFindingAlgorithm = async (graph, source, destination) => {
+const dijkstraAlgorithm = async (graph, source, destination) => {
 
   graph.$('node').data({
     isQueued: false,
@@ -175,7 +175,7 @@ export default {
       })
     })
 
-    useOnPathFinding(graph, mode, pathFindingAlgorithm)
+    useOnPathFinding(graph, mode, dijkstraAlgorithm)
 
     return {
       priorityQueueColumns,
