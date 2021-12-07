@@ -32,7 +32,7 @@ import { getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
 import cytoscape from 'cytoscape';
 import Table from '../../components/Table';
 import graphData from '../../graphs/graph.json';
-import graphStyle from './graphStyle';
+import graphStyle from '../../graphStyles/pathFinding';
 import { delay } from '../../utils';
 import { useTrackNodes } from '../../hooks';
 
