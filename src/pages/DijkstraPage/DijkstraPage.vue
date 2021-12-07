@@ -34,7 +34,8 @@ import Table from '../../components/Table';
 import graphData from '../../graphs/graph.json';
 import graphStyle from '../../graphStyles/pathFinding';
 import { delay } from '../../utils';
-import { useTrackNodes } from '../../hooks';
+import { useTrackNodes, useOnPathFinding } from '../../hooks';
+import { EDITOR_MODES } from '../../enums';
 
 
 export default {
@@ -71,6 +72,7 @@ export default {
   setup() {
     const priorityQueue = ref([]);
     const visited = ref([]);
+    const mode = ref(EDITOR_MODES.path);
 
     const nodeHints = useTrackNodes({
       weight: undefined,
@@ -86,7 +88,6 @@ export default {
     const byWeight = (a, b) => a.data('weight') - b.data('weight');
 
     const pathFindingAlgorithm = async (graph, source, destination) => {
-      console.log(source.data('id'), destination.data('id'));
 
       graph.$('node').data({
         isQueued: false,
@@ -166,17 +167,7 @@ export default {
       });
       const graph = instance.$graph;
 
-      let source = null;
-
-      graph.on('tap', 'node', async (event) => {
-        if (source === null) {
-          source = event.target;
-          return;
-        }
-        await pathFindingAlgorithm(graph, source, event.target);
-        source = null;
-      });
-
+      useOnPathFinding(graph, mode, pathFindingAlgorithm);
 
       graph.on('data', 'node', () => {
         priorityQueue.value = getQueuedNodes(graph)
@@ -202,6 +193,7 @@ export default {
       priorityQueue,
       visited,
       visitedColumns,
+      mode,
       nodeHints: nodeHints.proxies,
     }
   }

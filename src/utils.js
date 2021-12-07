@@ -49,3 +49,15 @@ export function delayedLoop(delay, sequence, callback) {
 }
 
 export const delay = (duration) => new Promise((resolve) => setTimeout(() => resolve(), duration));
+
+export function makeConnectionHandler(onTarget, onSource) {
+  let source = null;
+  return function twoNodesHandler(event) {
+    if (!source) {
+      source = event.target;
+      if (onSource) onSource(event);
+      return;
+    }
+    onTarget(source, event.target, event);
+  }
+}
