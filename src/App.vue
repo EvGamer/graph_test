@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import NotFound from './routes/NotFound';
-import RedBlackTreePage from './routes/RedBlackTreePage/RedBlackTreePage';
-import HomePage from './routes/HomePage';
+import NotFound from './pages/NotFound';
+import RedBlackTreePage from './pages/RedBlackTreePage/RedBlackTreePage';
+import HomePage from './pages/HomePage';
 import SideBar from './components/SideBar';
-import DijkstraPage from './routes/DijkstraPage/DijkstraPage';
+import DijkstraPage from './pages/DijkstraPage/DijkstraPage';
 
 const routes = {
   '/': HomePage,
