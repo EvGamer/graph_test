@@ -3,4 +3,5 @@ export default {
   addNode: 'addNode',
   addConnectedNode: 'addConnectedNode',
   connect: 'connect',
+  removeNode: 'removeNode',
 }

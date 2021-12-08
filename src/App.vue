@@ -36,6 +36,7 @@ export default {
 body {
   background: #222222;
   color: white;
+  margin: 0;
 }
 
 #app {

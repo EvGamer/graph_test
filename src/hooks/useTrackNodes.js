@@ -64,6 +64,10 @@ export default function useTrackNodes(graphRef, blankNodeData) {
     graph.on('data', 'node', ({ target }) => {
       updateProxyData(target);
     })
+
+    graph.on('add', 'node', ({ target }) => {
+      initProxy(target);
+    })
   })
 
   return proxies;

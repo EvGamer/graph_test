@@ -19,5 +19,6 @@ aside {
 a {
   display: block;
   color: white;
+  padding: 5px 20px;
 }
 </style>

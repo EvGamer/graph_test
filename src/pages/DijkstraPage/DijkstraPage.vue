@@ -1,13 +1,16 @@
 <template>
   <div class="page">
-    <div ref="graphContainer" class="graph">
-      <div
-          class="hint"
-          v-for="(hint, nodeId) in displayedNodeHints"
-          :key="nodeId"
-          :style="hintStyle(hint)"
-      >
-        {{ hint.weight }}
+    <div class="content">
+      <toolbar :mode="mode" :graph="graph" @set-mode="mode = $event"/>
+      <div ref="graphContainer" class="graph">
+        <div
+            class="hint"
+            v-for="(hint, nodeId) in displayedNodeHints"
+            :key="nodeId"
+            :style="hintStyle(hint)"
+        >
+          {{ hint.weight }}
+        </div>
       </div>
     </div>
     <div>
@@ -30,6 +33,7 @@
 <script>
 import { ref, watch } from 'vue';
 import Table from '../../components/Table';
+import Toolbar from '../../components/Toolbar';
 import graphData from '../../graphs/graph.json';
 import graphStyle from '../../graphStyles/pathFinding';
 import { delay } from '../../utils';
@@ -107,6 +111,7 @@ export default {
 
   components: {
     Table,
+    Toolbar
   },
 
   methods: {
@@ -201,15 +206,21 @@ export default {
 
   .page {
     display: flex;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
     align-content: flex-start;
+    height: 100vh;
   }
 
   .graph {
     position: relative;
     width: 1000px;
+    flex-grow: 1;
     min-width: 0;
     min-height: 800px;
-    height: 100%;
     border: 1px red;
   }
 </style>
