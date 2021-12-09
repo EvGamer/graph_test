@@ -8,14 +8,14 @@
       <i class="bi-node-plus" />
     </button>
     <button class="bi-share-fill" @click="setMode(options.connect)" />
-    <button class="bi-dash-circle-dotted" @click="setMode(options.removeNode)" />
+    <button class="bi-dash-circle-dotted" @click="setMode(options.remove)" />
   </div>
 </template>
 
 <script>
 import { toRef } from 'vue';
 import { EDITOR_MODES } from '../enums';
-import { useOnGraphEditorEvent } from '../hooks';
+import { useEditorEvents } from '../hooks';
 
 export default {
   name: 'Toolbar',
@@ -23,23 +23,74 @@ export default {
   props: ['graph', 'mode'],
 
   setup(props, { emit }) {
-    const graph = toRef(props, 'graph');
-    const mode = toRef(props, 'mode');
 
-    useOnGraphEditorEvent(graph, mode, 'mousedown', null, EDITOR_MODES.addNode, (event) => {
-      const didClickNode = Boolean(event.target.isNode?.());
-      console.log(didClickNode)
-      if (didClickNode) return;
+    const editorEvents = useEditorEvents(
+        toRef(props, 'graph'),
+        toRef(props, 'mode')
+    )
+
+    const addNode = (position) =>
+      props.graph.add({ group: 'nodes', position });
+
+    const connect = (source, target) =>
       props.graph.add({
-        group: 'nodes',
-        position: event.position,
+        group: 'edges',
+        data: {
+          source: source.data('id'),
+          target: target.data('id')
+        },
       })
+
+    editorEvents.mode(EDITOR_MODES.addNode).on('mousedown', (event) => {
+      const didClickNode = Boolean(event.target.isNode?.());
+      if (didClickNode) return;
+      addNode(event.position);
     })
+
+    let source = null;
+
+    const withSourceNode = (node, callback) => {
+      console.log(node);
+      if (!source && node?.isNode()) {
+        node.data('isQueued', true);
+        source = node;
+        return;
+      }
+      callback(source, node);
+      source.data('isQueued', false);
+      source = null;
+    }
+
+
+    editorEvents.mode(EDITOR_MODES.connect).query('node')
+      .on('tap', ({ target }) => {
+        console.log('cnct')
+        withSourceNode(target, (source) => connect(source, target))
+      })
+
+    editorEvents.mode(EDITOR_MODES.addConnectedNode)
+      .on('mousedown', ({ target, position }) => {
+        withSourceNode(target, (source) => {
+          if (!target.isNode?.()) {
+            target = addNode(position);
+          }
+          const edge = connect(source, target);
+          console.log(edge);
+        })
+      })
+
+    const deleteMode = editorEvents.mode(EDITOR_MODES.remove)
+
+    const handleRemove = (event) => {
+      props.graph.remove(event.target);
+    }
+    deleteMode.query('nodes').on('tap', handleRemove)
+    deleteMode.query('edges').on('tap', handleRemove)
 
     return {
       setMode(mode) {
         emit('set-mode', mode);
-        console.log('set mode');
+        console.log('set mode', mode);
       },
       options: EDITOR_MODES,
     }
