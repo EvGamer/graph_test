@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { toRef } from 'vue';
+import { toRef, watch } from 'vue';
 import { EDITOR_MODES } from '../enums';
 import { useEditorEvents } from '../hooks';
 
@@ -23,25 +23,44 @@ export default {
   props: ['graph', 'mode'],
 
   setup(props, { emit }) {
+    const options = EDITOR_MODES;
+    const graphRef = toRef(props, 'graph');
 
     const editorEvents = useEditorEvents(
-        toRef(props, 'graph'),
+        graphRef,
         toRef(props, 'mode')
     )
 
+    let maxId = 0;
+
+    watch(graphRef, graph => {
+      if (!graph) return
+      for (let node of graph.nodes()) {
+        const numId = parseInt(node.data('id'));
+        if (Number.isNaN(numId)) continue;
+
+        if (numId > maxId) maxId = numId;
+      }
+    })
+
     const addNode = (position) =>
-      props.graph.add({ group: 'nodes', position });
+      props.graph.add({
+        group: 'nodes',
+        position,
+        data: { id: ++maxId }
+      });
 
     const connect = (source, target) =>
       props.graph.add({
         group: 'edges',
         data: {
+          weight: 1,
           source: source.data('id'),
           target: target.data('id')
         },
       })
 
-    editorEvents.mode(EDITOR_MODES.addNode).on('mousedown', (event) => {
+    editorEvents.mode(options.addNode).on('mousedown', (event) => {
       const didClickNode = Boolean(event.target.isNode?.());
       if (didClickNode) return;
       addNode(event.position);
@@ -50,7 +69,11 @@ export default {
     let source = null;
 
     const withSourceNode = (node, callback) => {
-      console.log(node);
+      if (node === source) {
+        source = null;
+        source.data('isQueued', false);
+        return;
+      }
       if (!source && node?.isNode()) {
         node.data('isQueued', true);
         source = node;
@@ -59,33 +82,32 @@ export default {
       callback(source, node);
       source.data('isQueued', false);
       source = null;
-    }
+    };
 
 
-    editorEvents.mode(EDITOR_MODES.connect).query('node')
+    editorEvents.mode(options.connect).query('node')
       .on('tap', ({ target }) => {
-        console.log('cnct')
         withSourceNode(target, (source) => connect(source, target))
-      })
+      });
 
-    editorEvents.mode(EDITOR_MODES.addConnectedNode)
+    editorEvents.mode(options.addConnectedNode)
       .on('mousedown', ({ target, position }) => {
-        withSourceNode(target, (source) => {
-          if (!target.isNode?.()) {
-            target = addNode(position);
-          }
-          const edge = connect(source, target);
-          console.log(edge);
-        })
-      })
+        if (!target.isNode?.()) {
+          const newNode = addNode(position);
+          connect(source, newNode);
+          source = newNode;
+          return;
+        }
+        source = target;
+      });
 
-    const deleteMode = editorEvents.mode(EDITOR_MODES.remove)
+    const deleteMode = editorEvents.mode(options.remove);
 
     const handleRemove = (event) => {
       props.graph.remove(event.target);
     }
-    deleteMode.query('nodes').on('tap', handleRemove)
-    deleteMode.query('edges').on('tap', handleRemove)
+    deleteMode.query('node').on('tap', handleRemove)
+    deleteMode.query('edge').on('tap', handleRemove)
 
     return {
       setMode(mode) {
