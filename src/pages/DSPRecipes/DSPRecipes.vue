@@ -47,6 +47,55 @@ function getRecipeEdges(recipes) {
   return edges;
 }
 
+function filterToItemsProductionChain({ items, recipes, resultItems, baseItems = [] }) {
+  const resultItemSet = new Set(resultItems);
+  const baseItemSet = new Set(baseItems);
+  console.log('items', items);
+  const toVisit = items.filter(item => resultItemSet.has(item.id));
+  console.log('toVisit', toVisit);
+  console.log('iron-vein', items.filter('iron-vein'));
+  const filteredItems = [];
+  const filteredRecipes = [];
+
+  // depth first
+  while (toVisit.length > 0) {
+    const item = toVisit.pop();
+    console.log('pop', item)
+    filteredItems.push(item);
+
+    console.log('item.id', item.id)
+
+    if (baseItemSet.has(item) || true) continue;
+
+    const recipesForItem = recipes.filter(recipe => recipe.out[item.id]);
+    filteredRecipes.push(...recipesForItem);
+
+    if (!recipes.in) continue;
+    toVisit.push(...items.filter(input => recipes.in[input.id]))
+  }
+
+  return { items, recipes };
+}
+
+function getNodesFromDspData({ items, recipes }) {
+  return {
+    ...items.map((item) => ({
+      data: {
+        type: 'item',
+        id: item.id,
+        name: item.name,
+      },
+    })),
+    ...recipes.map((recipe) => ({
+      data: {
+        type: 'recipe',
+        id: recipe.id,
+        name: recipe.name,
+      }
+    }))
+  };
+}
+
 const LAYOUT_SETTINGS = {
   name: 'cise',
 }
@@ -57,6 +106,13 @@ export default {
     onMounted(() => {
       const instance = getCurrentInstance();
 
+      const filteredData = filterToItemsProductionChain({
+        items: dspData.items,
+        recipes: omitTech(dspData.recipes),
+        resultItems: ['processor'],
+        baseItems: ['iron-ingot']
+      });
+
       const graph = cytoscape({
         container: instance.refs.graph,
         layout: LAYOUT_SETTINGS,
@@ -65,23 +121,8 @@ export default {
         style: graphStyle,
 
         elements: {
-          edges: getRecipeEdges(dspData.recipes),
-          nodes: [
-            ...dspData.items.map((item) => ({
-              data: {
-                type: 'item',
-                id: item.id,
-                name: item.name,
-              },
-            })),
-            ...omitTech(dspData.recipes).map((recipe) => ({
-              data: {
-                type: 'recipe',
-                id: recipe.id,
-                name: recipe.name,
-              }
-            }))
-          ],
+          edges: getRecipeEdges(filteredData.recipes),
+          nodes: getNodesFromDspData(filteredData),
         }
       });
 
