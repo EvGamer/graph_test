@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import DSPRecipes from '@/pages/DSPRecipes/DSPRecipes';
 import NotFound from './pages/NotFound';
 import RedBlackTreePage from './pages/RedBlackTreePage/RedBlackTreePage';
 import HomePage from './pages/HomePage';
@@ -16,6 +17,7 @@ const routes = {
   '/': HomePage,
   '/trees/red-black': RedBlackTreePage,
   '/pathfinding/dijkstra': DijkstraPage,
+  '/dsp/recipes': DSPRecipes,
 }
 
 export default {
